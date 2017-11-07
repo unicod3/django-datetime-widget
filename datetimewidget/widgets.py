@@ -23,7 +23,7 @@ supported_languages = set([
     'bg',
     'ca', 'cs',
     'da', 'de',
-    'ee', 'el', 'es','eu',
+    'ee', 'el', 'es',
     'fi', 'fr',
     'he', 'hr', 'hu',
     'id', 'is', 'it',
@@ -195,27 +195,28 @@ class PickerWidgetMixin(object):
             # Javascript data format for the options dictionary
             self.is_localized = True
 
-            # Get format from django format system
-            self.format = get_format(self.format_name)[0]
-
-            # Convert Python format specifier to Javascript format specifier
-            self.options['format'] = toJavascript_re.sub(
-                lambda x: dateConversiontoJavascript[x.group()],
-                self.format
-                )
+            # # Get format from django format system
+            # self.format = get_format(
+            #     self.format_name)[0]
+            #
+            # # Convert Python format specifier to Javascript format specifier
+            # self.options['format'] = toJavascript_re.sub(
+            #     lambda x: dateConversiontoJavascript[x.group()],
+            #     self.format
+            #     )
 
             # Set the local language
             self.options['language'] = get_supported_language(get_language())
 
-        else:
 
-            # If we're not doing localisation, get the Javascript date format provided by the user,
-            # with a default, and convert it to a Python data format for later string parsing
-            format = self.options['format']
-            self.format = toPython_re.sub(
-                lambda x: dateConversiontoPython[x.group()],
-                format
-                )
+        # If we're not doing localisation, get the Javascript date format provided by the user,
+        # with a default, and convert it to a Python data format for later string parsing
+        format = self.options['format']
+        self.format = toPython_re.sub(
+            lambda x: dateConversiontoPython[x.group()],
+            format
+            )
+
 
         super(PickerWidgetMixin, self).__init__(attrs, format=self.format)
 
@@ -253,7 +254,8 @@ class PickerWidgetMixin(object):
 
         js = ["js/bootstrap-datetimepicker.js"]
 
-        language = self.options.get('language', 'en')
+        # language = self.options.get('language', 'en')
+        language = get_supported_language(get_language())
         if language != 'en':
             js.append("js/locales/bootstrap-datetimepicker.%s.js" % language)
 
@@ -330,4 +332,5 @@ class TimeWidget(PickerWidgetMixin, TimeInput):
         options['format'] = options.get('format', 'hh:ii')
 
         super(TimeWidget, self).__init__(attrs, options, usel10n, bootstrap_version)
+
 
